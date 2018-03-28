@@ -160,7 +160,42 @@ reverse_string:
 
 #### Write your solution here ####
 
+	addi	$sp, $sp, -4		# PUSH return address to caller
+	sw	$ra, 0($sp)
+
+sb $t7, 0($a0)
+
+for_reverse_add_loop:
+	lb $t0 0($a0)                   # Load value of a0 to t0
+	beq  $t0 0x00 end_for_reverse_add_loop # Done if $t0 == NULL
+	sb $t0 0($sp) 			# Save t0 in the stack
+	addi	$sp, $sp, -4 		# Decrement the stack pointer
+	addi $a0 $a0 1			# Move to next adress
+	j    for_reverse_add_loop	
+
+end_for_reverse_add_loop:
+
+lb $t7, 0($a0)
+
+for_reverse_set_loop:
+	lb $t0 0($a0)                   # Load value of a0 to t0
+	beq  $t0 0x00 end_for_reverse_set_loop # Done if $t0 == NULL
+	lb $t6, 0($sp) 			# Save a0 in the stack
+  	sb $t6, 0($a0)	
+	addi	$sp, $sp, 4 		# Decrement the stack pointer
+	addi $a0 $a0 1 			# Move to next adress
+j    for_reverse_set_loop	
+
+end_for_reverse_set_loop:			
+	
+
+	
+	lw	$ra, 0($sp)		# Pop return address to caller
+	addi	$sp, $sp, 4		
+
+	jr	$ra			
 		
+						
 ##############################################################################
 #
 # Strings used by main:
@@ -184,7 +219,10 @@ STR_for_each_ascii:
 
 STR_for_each_to_upper:
 	.asciiz "\n\nstring_for_each(str, to_upper)\n\n"	
-
+	
+STR_reverse_string:
+	.asciiz "\n\nstring_reverse_string(str)\n\n"
+	
 	.text
 	.globl main
 
@@ -274,9 +312,26 @@ main:
 	lw	$ra, 0($sp)	# POP return address
 	addi	$sp, $sp, 4	
 	
+	
+	##
+	### reverse_string(string)
+	##
+	
+	li	$v0, 4
+	la	$a0, STR_reverse_string
+	syscall
+
+	la	$a0, STR_str
+	jal	reverse_string
+	
+	la	$a0, STR_str
+	jal	print_test_string
+	
+	lw	$ra, 0($sp)	# POP return address
+	addi	$sp, $sp, 4	
+	
 	li 	$v0 10
 	syscall
-	
 
 ##############################################################################
 #
