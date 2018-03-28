@@ -1,12 +1,12 @@
 ##############################################################################
 #
-#  KURS: 1DT093 våren 2016
+#  KURS: 1DT093 vï¿½ren 2016
 #
-#   VAD: Inlämningsuppift: Arrayer, Strängar, Loopar och Subrutiner.
+#   VAD: Inlï¿½mningsuppift: Arrayer, Strï¿½ngar, Loopar och Subrutiner.
 #	
-# DATUM:
+# DATUM: 2018-03-28
 #
-#  NAMN:			
+#  NAMN: Helena Frestadius		
 #
 #  NAMN:
 #
@@ -44,15 +44,15 @@ DBG:	##### DEBUGG BREAKPOINT ######
 	
 for_all_in_array:
 
-	#### Append a MIPS-instruktion before each of these comments
+	#### Append a MIPS-instruction before each of these comments
 	
-	# Done if i == N
-	# 4*i
-	# address = ARRAY + 4*i
-	# n = A[i]
-       	# Sum = Sum + n
-        # i++ 
-  	# next element
+	beq  $t0, $a1, end_for_all	# Done if i == N
+	sll  $t1, $t0, 2		# 4*i = $t1
+	add  $t1, $a0, $t1		# address = ARRAY + 4*i
+	lw   $t2, 0($t1)		# n = A[i]
+       	add  $v0, $v0, $t2		# Sum = Sum + n
+       	addi $t0, $t0, 1		# i++ 
+  	j    for_all_in_array		# next element
 	
 end_for_all:
 	
@@ -73,7 +73,19 @@ string_length:
 
 	#### Write your solution here ####
 	
-	jr	$ra
+	add $v0 $zero $zero 		# Initialize length of string to 0.
+
+string_length_loop:
+	
+	lb   $t0 0($a0)			# Put value of $a0 in $t0
+	beq  $t0 0x00 end_string_length # Done if $t0 == NUL
+	addi $v0 $v0 1 			# Add 1 to the counter
+	addi $a0 $a0 1			# Move to next adress
+	j    string_length_loop		# Back to loop	
+	
+end_string_length:
+
+	jr	$ra			# Return to caller.
 	
 ##############################################################################
 #
@@ -95,10 +107,11 @@ string_for_each:
 
 	#### Write your solution here ####
 	
+	
 	lw	$ra, 0($sp)		# Pop return address to caller
 	addi	$sp, $sp, 4		
 
-	jr	$ra
+	jr	$ra			
 
 ##############################################################################
 #
@@ -157,8 +170,8 @@ STR_for_each_to_upper:
 #
 ##############################################################################	
 main:
-	addi	$sp, $sp, -4	# PUSH return address
-	sw	$ra, 0($sp)
+	#addi	$sp, $sp, -4	# PUSH return address
+	#sw	$ra, 0($sp)
 
 	##
 	### integer_array_sum
@@ -237,7 +250,9 @@ main:
 	lw	$ra, 0($sp)	# POP return address
 	addi	$sp, $sp, 4	
 	
-	jr	$ra
+	li 	$v0 10
+	syscall
+	
 
 ##############################################################################
 #
