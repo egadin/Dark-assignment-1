@@ -8,7 +8,7 @@
 #
 #  NAMN: Helena Frestadius		
 #
-#  NAMN:
+#  NAMN: Erik Gadin
 #
 ##############################################################################
 
@@ -106,7 +106,18 @@ string_for_each:
 	sw	$ra, 0($sp)
 
 	#### Write your solution here ####
-	
+for_each_loop:
+	lb $t0 0($a0)                   # Load value of a0 to t0
+	beq  $t0 0x00 end_for_each_loop # Done if $t0 == NULL
+	addi	$sp, $sp, -4 		# Decrement the stack pointer
+	sw $a0 0($sp) 			# Save a0 in the stack
+	jalr $a1         		# Go to a1 (print test string)
+	lw	$a0, 0($sp) 		# Restore a0 from stack
+	addi	$sp, $sp, 4 		#Increment the stack pointer
+	addi $a0 $a0 1			# Move to next adress
+	j    for_each_loop	
+
+end_for_each_loop:		
 	
 	lw	$ra, 0($sp)		# Pop return address to caller
 	addi	$sp, $sp, 4		
@@ -123,8 +134,18 @@ string_for_each:
 to_upper:
 
 	#### Write your solution here ####
-    
-	jr	$ra
+	lb $t0, 0($a0) 			# Load byte from a0
+	slti $t1, $t0, 123 		# Set t1 to 1 if t0 is lower than 123
+	addi $t3, $zero, 96 		# creates a register with 96
+	sgt $t2, $t0, $t3 		# Set t2 to 1 if t0 is greater than 96
+	and $t1, $t1, $t2 		# Set t1=1 if t0 is greater than 96 and lower than 123 else t1=0
+	
+	bne $t1, 1, skip 		# Skip the addition if t1 isn't within bounds else do the addition
+	addi $t0, $t0, -32 		# Lower t0 by 20 and store it in a0
+	sb $t0, 0($a0)
+skip:
+	
+  	jr	$ra
 
 
 ##############################################################################
@@ -135,8 +156,11 @@ to_upper:
 ##	
 ##############################################################################
 ##############################################################################
+reverse_string:
 
-	
+#### Write your solution here ####
+
+		
 ##############################################################################
 #
 # Strings used by main:
